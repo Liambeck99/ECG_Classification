@@ -58,7 +58,7 @@ title('X = ECG = b0 + b1x1 + b2x3 + b3x5')
 ECGp = beta1 * y(2,:) + beta2 * y(4,:) + beta3 * y(6,:);
 subplot(4,2,8);
 plot(t, ECGp);
-title('X = ECGp = b1x2 + b2x4 + b3x5')
+title('Xp = ECGp = b1x2 + b2x4 + b3x5')
 
 % define the system of equations
 function xp = ddefunc(~, x, XL)
