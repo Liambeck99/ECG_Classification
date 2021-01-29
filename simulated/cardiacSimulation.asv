@@ -12,39 +12,41 @@ d.sa = 1.9;
 e.sa = 0.55;
 
 % AV oscilator
-a.av = [3., 7., 7., 3., 3., 3.];
+a.av = [3., 7., 7., 3., 3., 3. ;
 v.av1 = 0.5;
 v.av2 = -0.5;
 d.av = 4.;
 e.av = 0.67;
 
 % HP oscilator
-a.hp = [7., 7., 7., 7., 0.5, 0.5];
+a.hp = 7.;
 v.hp1 = 1.65;
 v.hp2 = -2.;
 d.hp = 7.;
 e.hp = 0.67;
 
 % Couplings
-k.saav =  [3., 0.66, 0.66, 3., 3., 3.];
-k.avhp =  [55., 14., 14., 45., 30., 14.];
-kt.saav = [3., 0.02, 0.09, 3., 3., 0.4];
-kt.avhp = [55., 60., 38., 20., 30., 38.];
+k.saav = 3.;
+k.avhp = 55.;
+kt.saav = 3.;
+kt.avhp = 55.;
 
 % Time delays
-tsaav = [0.8, 0.66, 0.8, 0.8, 0.8, 0.8];
+tsaav = 0.8;
 tavhp = 0.1;
 
 % lags defined for system
 lags = [tsaav tavhp];
 
-% index for ECG type
+% index for arrhythmia
+
 normalCardiac = 1;
-atrialFlutter = 2;
+artialFlutter = 2;
 atrialFibrilation = 3;
 ventricularFlutter = 4;
 ventricularFibrillationWithStim = 5;
 ventricularFibrillationNoStim = 6;
+
 
 % time frame
 ts = 0;
@@ -90,10 +92,10 @@ beta2 = 0.1;
 beta3 = 0.3;
 
 % calculate ECG
-ECG = beta0 + beta1 * y(1,:) + beta2 * y(3,:) + beta3 * y(5,:);
-subplot(4,2,7);
-plot(t, ECG);
-title('X = ECG = b0 + b1x1 + b2x3 + b3x5')
+% ECG = beta0 + beta1 * y(1,:) + beta2 * y(3,:) + beta3 * y(5,:);
+% subplot(4,2,7);
+% plot(t, ECG);
+% title('X = ECG = b0 + b1x1 + b2x3 + b3x5')
 
 % calculate ECG prime
 ECGp = beta1 * y(2,:) + beta2 * y(4,:) + beta3 * y(6,:);
@@ -101,7 +103,7 @@ subplot(4,2,8);
 plot(t, ECGp);
 title('Xp = ECGp = b1x2 + b2x4 + b3x5')
 
-% calculate plot own figure for ECG signal
+% calculate ECG
 ECG = beta0 + beta1 * y(1,:) + beta2 * y(3,:) + beta3 * y(5,:);
 figure;
 plot(t, ECG);
@@ -124,20 +126,20 @@ function xp = ddefunc(~, x, XL, a, v, d, e, k, kt , i)
     x1lag = XL1.saav(1);
     x3lag = XL3.avhp(3);
     
-    x2p = - (a.sa * x2 * (x1-v.sa1(i)) * (x1-v.sa2(i)))...
+    x2p = - (a.sa * x2 * (x1-v.sa1(i)) * (x1-v.sa2))...
           - ( (x1 * (x1+d.sa) * (x1+e.sa)) / (d.sa * e.sa) );%...
           %- 2 * x1;
       
-    x4p = - (a.av(i) * x4 * (x3-v.av1) * (x3-v.av2))...
+    x4p = - (a.av * x4 * (x3-v.av1) * (x3-v.av2))...
           - ( (x3 * (x3+d.av) * (x3+e.av)) / (d.av * e.av) )...
-          - k.saav(i)*x3...
-          + kt.saav(i)*x1lag;%...
+          - k.saav*x3...
+          + kt.saav*x1lag;%...
           %- x(3);
     
-    x6p = - (a.hp(i) * x6 * (x5-v.hp1) * (x5-v.hp2))...
+    x6p = - (a.hp * x6 * (x5-v.hp1) * (x5-v.hp2))...
           - ( (x5 * (x5+d.hp) * (x5+e.hp)) / (d.hp * e.hp) )...
-          - k.avhp(i)*x5...
-          + kt.avhp(i)*x3lag;%...
+          - k.avhp*x5...
+          + kt.avhp*x3lag;%...
           %- x5;
     
     
