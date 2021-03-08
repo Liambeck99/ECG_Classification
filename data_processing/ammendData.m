@@ -22,6 +22,12 @@ end
 % For each file
 for i=1:length(files)
     
+   % If not normal ECG or atrial fibrilation continue
+   if( ismember(labels.Var2(i), 'O') || ismember(labels.Var2(i), '~') )
+       continue;
+   end
+    
+    
    % Load source file
    sourceFile = load( fullfile( psource, files(i).name ) );
    
