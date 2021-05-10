@@ -1,31 +1,38 @@
-% Program to correct data format by:
-%   - Fixing the size to an array of 1x5000
-%   - Removing unwanted labels
-%   - Adding all to a single csv
+% Program to join the reala dn simulated data into a single file
 
 % Try to load data
 if exist( 'training2017/ ' , 'dir' )
     
-    files = dir('training2017/*.mat');
+    files_real = dir('training2017/*.mat');
     labels = readtable('training2017/REFERENCE-v3.csv', 'ReadVariableNames',false);
-    psource = 'training2017\';
+    psource_real = 'training2017\';
     
 else
     error('Error. no folder "training2017" found')
 end
 
-% Create new folder if doesnt exist
-if ~exist( 'ammendedData' , 'dir' )
- 
-    mkdir( 'ammendedData' );
-    pdest = 'ammendedData\';
+% Try to load data
+if exist( 'simulatedData/ ' , 'dir' )
+    
+    files_afib = dir('../simulated/simulatedData/*.csv');
+    psource_afib = '../simulated/simulatedData\';
     
 else
-    error('Error. folder "ammendedData" already exists');
+    error('Error. no folder "simulatedData" found')
+end
+
+% Create new folder if doesnt exist
+if ~exist( 'mergedData' , 'dir' )
+ 
+    mkdir( 'mergedData' );
+    pdest = 'mergedData\';
+    
+else
+    error('Error. folder "mergedData" already exists');
 end
 
 % For each file
-for i=1:length(files)
+for i=1:length(files_real)
     
    % If not normal ECG or atrial fibrilation continue
    if( ismember(labels.Var2(i), 'O') || ismember(labels.Var2(i), '~') )
@@ -33,7 +40,7 @@ for i=1:length(files)
    end
     
    % Load source file
-   sourceFile = load( fullfile( psource, files(i).name ) );
+   sourceFile = load( fullfile( psource_real, files_real(i).name ) );
    
    % If the length of the file is equal/over 5000 copy to new folder
    if( size( sourceFile.val , 2 ) > 5000 )
@@ -72,9 +79,30 @@ for i=1:length(files)
    end
 end
 
+% For each afib file append and create label
+for i=1:length(files_afib)
+
+   % Load source file
+   sourceFile = load( fullfile( psource_afib, files_afib(i).name ) );
+   
+   % If matrix doesnt exist create it
+   if( exist('matrix' , 'var' ) == false )
+       matrix = sourceFile;
+   else
+       matrix = cat( 1 , matrix, sourceFile ); % else concatanate
+   end
+   
+   % Adds the corresponding label to a new array
+   if( exist('newlabels' , 'var' ) == false )
+       newlabels = labels(1);
+   else
+       newlabels = cat( 1 , newlabels, labels(4,2) ); % else concatanate
+   end
+end
+
 % Create a files at destination
-destFile = fullfile( pdest, sprintf('ammendedData.csv')  );
-destLabels = fullfile( pdest, sprintf('ammendedLabels.csv')  );
+destFile = fullfile( pdest, sprintf('mergedData.csv')  );
+destLabels = fullfile( pdest, sprintf('mergedDataLabels.csv')  );
            
 % Write data to files
 writematrix(matrix, destFile);
