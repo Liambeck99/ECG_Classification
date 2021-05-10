@@ -27,7 +27,6 @@ for i=1:length(files)
        continue;
    end
     
-    
    % Load source file
    sourceFile = load( fullfile( psource, files(i).name ) );
    

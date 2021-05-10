@@ -42,7 +42,7 @@ p.kSAAV = randomEffects(p.kSAAV, 0.1);
 % disp(p.kSAAV);
 % disp(p.ktSAAV);
 % 
-p.kAVHP = randomEffects(p.kAVHP, 1.0);
+p.kAVHP = randomEffects(p.kAVHP, 0.5);
 % %p.ktAVHP = p.kAVHP;
 % p.ktAVHP= randomEffects(p.ktAVHP, 1.0);
 % disp(p.kAVHP);
